@@ -23,6 +23,8 @@ def get_ms(time_str):
     h, m, s = time_str.split(':')
     return int(h) * 3600000 + int(m) * 60000 + int(s) * 1000
 
+
+
 @bot.command(name='pause', help='Pauses the currently playing movie')
 @commands.has_any_role(*[roleID]) 
 async def pause(ctx):
@@ -200,7 +202,7 @@ async def search(ctx, movie_title = None):
         else:
             for i, item in enumerate(searchlist):
                 searchlistFormatted.append(str(i+1) + '. ' + item)
-        embed.add_field(name="Movies", value="```" + '\n'.join(map(str, searchlistFormatted[1:10])) + "```", inline=True)
+        embed.add_field(name="Movies", value="```" + '\n'.join(map(str, searchlistFormatted[0:10])) + "```", inline=True)
         await ctx.send(embed=embed)
 
 @bot.command(name='recentlyadded', help='Outputs the recently added movies') #TODO: add latest release titles (ie last 10 movies from 2020)
@@ -215,7 +217,7 @@ async def search(ctx):
     else:
         for i, item in enumerate(searchlist):
             searchlistFormatted.append(str(i+1) + '. ' + item)
-        embed.add_field(name="Movies", value="```" + '\n'.join(map(str, searchlistFormatted[1:10])) + "```", inline=True)
+        embed.add_field(name="Movies", value="```" + '\n'.join(map(str, searchlistFormatted[0:10])) + "```", inline=True)
         await ctx.send(embed=embed)
 
 @bot.command(name='reload', help='Reloads the plex client') #TODO: figure out what this actually does
@@ -223,7 +225,8 @@ async def search(ctx):
 async def rewind(ctx):
     client = plex.client(plexClient)
     client.reload()
-
+    
+    
 # @bot.command(name='clients', help='Lists all connected clients') #debugging command
 # @commands.has_any_role(*[roleID])
 # async def search(ctx):
