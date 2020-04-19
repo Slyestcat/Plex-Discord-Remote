@@ -123,12 +123,12 @@ async def rewind(ctx, *, x = None):
         subtitlelist = []
         movies = plex.library.section('Movies')
         for video in movies.search(x):
-            searchlist.append(video.title)
+            searchlist.append(video.title  + " (" + str(video.year) + ")")
         if not searchlist:
             await ctx.send("Cannot find a title containing `" + x + "`")
         else:
             for i, item in enumerate(searchlist):
-                searchlistFormatted.append(str(i+1) + '. ' + item  + " (" + str(video.year) + ")")
+                searchlistFormatted.append(str(i+1) + '. ' + item)
             embed2.add_field(name="Movies", value="```" + '\n'.join(map(str, searchlistFormatted)) + "```", inline=True)
             await ctx.send(embed=embed2)
             try:
@@ -138,7 +138,9 @@ async def rewind(ctx, *, x = None):
             else:
                 movieNum = int(msg.content) - 1
                 movies = plex.library.section("Movies")
-                for movie in movies.get(searchlist[movieNum]):
+                text = searchlist[movieNum]
+                head, sep, tail = text.partition(" (")
+                for movie in movies.get(head):
                     movie = movie.reload()
                     langCode = None
                     for subtitle in movie.subtitleStreams():
@@ -166,12 +168,12 @@ async def play(ctx, *, movie_title = None):
         searchlistFormatted = []
         movies = plex.library.section('Movies')
         for video in movies.search(movie_title):
-            searchlist.append(video.title)
+            searchlist.append(video.title + " (" + str(video.year) + ")")
         if not searchlist:
             await ctx.send("Cannot find a title containing `" + movie_title + "`")
         else:
             for i, item in enumerate(searchlist):
-                searchlistFormatted.append(str(i+1) + '. ' + item  + " (" + str(video.year) + ")")
+                searchlistFormatted.append(str(i+1) + '. ' + item)
             embed.add_field(name="Movies", value="```" + '\n'.join(map(str, searchlistFormatted)) + "```", inline=True)
             await ctx.send(embed=embed)
             try:
@@ -180,8 +182,10 @@ async def play(ctx, *, movie_title = None):
                 await ctx.send('You took too long...')
             else:
                 movieNum = int(msg.content) - 1
+                text = searchlist[movieNum]
+                head, sep, tail = text.partition(" (")
                 client = plex.client(plexClient)
-                cars = plex.library.section('Movies').get(searchlist[movieNum])
+                cars = plex.library.section('Movies').get(head)
                 client.playMedia(cars)
                 movies = ia.search_movie(searchlist[movieNum])
                 id = movies[0].getID()
@@ -249,10 +253,10 @@ async def search(ctx):
     searchlistFormatted = []
     movies = plex.library.section('Movies')
     for video in movies.recentlyAdded():
-        searchlist.append(video.title)
+        searchlist.append(video.title + " (" + str(video.year) + ")")
     else:
         for i, item in enumerate(searchlist):
-            searchlistFormatted.append(str(i+1) + '. ' + item + " (" + str(video.year) + ")")
+            searchlistFormatted.append(str(i+1) + '. ' + item)
         embed.add_field(name="Movies", value="```" + '\n'.join(map(str, searchlistFormatted[0:10])) + "```", inline=True)
         await ctx.send(embed=embed)
 
