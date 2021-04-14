@@ -2,22 +2,59 @@ import os
 import asyncio
 import plexapi
 import discord
+import random
+import time
+ 
 
 from imdb import IMDb
 from discord.ext import commands
 from plexapi.server import PlexServer
-baseurl = 'http://192.168.1.13:32400'
-token = 'CTVRSarGZJ2y7Tj_ngez' #TODO: set plex data in another file
+baseurl = ''
+token = '' #TODO: set plex data in another file
 plex = PlexServer(baseurl, token)
 
-TOKEN = 'Njk2ODI1MTYyMDIwMTU5NTcx.XousXg.fjvr47F4hFYLDvkTf6MXuEr_gVY' #TODO: set bot token in another file
+TOKEN = '' #TODO: set bot token in another file
    
 bot = commands.Bot(command_prefix='$', case_insensitive=True) #TODO: switch all "$" flags to be dynamic in bot responses
 
 ia = IMDb()
 
-plexClient = "OSRSWIN10" #TODO: set client in another file
-roleID = 697273095769292900 #TODO: set roleID in another file
+plexClient = "" #TODO: set client in another file
+roleID =  #TODO: set roleID in another file
+
+# client = plex.client(plexClient)
+# currentlyPlaying = client.isPlayingMedia(includePaused=False)
+# print (client.timeline)
+
+# while currentlyPlaying:
+    # print("Movie is playing")
+    # print (client.timeline)
+    # print (currentlyPlaying)
+    # time.sleep(2)
+# else:
+    # print("Movie is not playing")
+    # print (currentlyPlaying)
+    # time.sleep(2)
+    # alphaBet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+    # r = random.choice(alphaBet)
+    # print(r)
+    # movie_title = r
+    # searchlist = []
+    # searchlistFormatted = []
+    # movies = plex.library.section('Movies')
+    # for video in movies.search(movie_title):
+        # searchlist.append(video.title)
+    # if not searchlist:
+        # #await ctx.send("Cannot find a title containing `" + movie_title + "`")
+    # else:
+        # for i, item in enumerate(searchlist):
+            # searchlistFormatted.append(str(i+1) + '. ' + item  + " (" + str(video.year) + ")")
+    # text = random.choice(searchlist)
+    # head, sep, tail = text.partition(" (")
+    # client = plex.client(plexClient)
+    # cars = plex.library.section('Movies').get(head)
+    # client.playMedia(cars)
+
 
 def pred(m):
     return m.author == message.author and m.channel == message.channel
@@ -63,7 +100,7 @@ async def next(ctx):
     
 @bot.command(name='fforward', help='Skips forward a chunk')
 @commands.has_any_role(*[roleID]) 
-async def fastforward(ctx,x = None):
+async def fforward(ctx,x = None):
     if x is None:
         await ctx.send("Please follow the syntax `$fforward <int>`")
     else:
@@ -83,13 +120,13 @@ async def rewind(ctx,x = None):
         xInt = int(x)
         while (xInt > 0):
             client = plex.client(plexClient)
-            client.stepForward()
+            client.stepBack()
             xInt = xInt - 1
         await ctx.send("Rewound **" + x + "** chunks.")
 
 @bot.command(name='skipto', help='Skips to a desired time')
 @commands.has_any_role(*[roleID]) 
-async def rewind(ctx,x = None):
+async def skipto(ctx,x = None):
     if x is None:
         await ctx.send("Please follow the syntax `$skipto <00:00:00>`")
     else:
@@ -103,14 +140,14 @@ async def rewind(ctx,x = None):
 
 @bot.command(name='subtitles', help='Sets the subtitle stream, 0 is none') #TODO: Remove this command
 @commands.has_any_role(*[roleID]) 
-async def rewind(ctx,x):
+async def subtitles(ctx,x):
     client = plex.client(plexClient)
     client.setSubtitleStream(x)
     await ctx.send("Enabled subtitle stream `" + x + "`")
     
 @bot.command(name='getsubtitles', help='Gets the availble subtitles for the specified movie') #TODO: allow used to select subtitle stream from this command
 @commands.has_any_role(*[roleID]) 
-async def rewind(ctx, *, x = None):
+async def getsubtitles(ctx, *, x = None):
     embed=discord.Embed(title="Available Subtitles", color=0x00ff08)
     embed.set_footer(text="Please use the $subtitles command to enable a subtitles stream.")
     embed2=discord.Embed(title="Available Titles", color=0x00ff08)
@@ -153,7 +190,7 @@ async def rewind(ctx, *, x = None):
 
 @bot.command(name='playlist', help='Gets the availble subtitles.') #TODO: add playlist options/movie queuing
 @commands.has_any_role(*[roleID]) 
-async def rewind(ctx):
+async def playlist(ctx):
     for media_list in [list for list in plex.playlist('moviebot').items()]:
         print(''.join([x.file for x in media_list.iterParts()]))
 
@@ -247,7 +284,7 @@ async def search(ctx, *, movie_title = None):
 
 @bot.command(name='recentlyadded', help='Outputs the recently added movies') #TODO: add latest release titles (ie last 10 movies from 2020)
 @commands.has_any_role(*[roleID])
-async def search(ctx):
+async def recentlyadded(ctx):
     embed=discord.Embed(title="Recently Added Titles", description="10 most recently added titles to the plex server.", color=0x00ff08)
     searchlist = []
     searchlistFormatted = []
@@ -262,13 +299,13 @@ async def search(ctx):
 
 @bot.command(name='reload', help='Reloads the plex client') #TODO: figure out what this actually does
 @commands.has_any_role(*[roleID]) 
-async def rewind(ctx):
+async def reload(ctx):
     client = plex.client(plexClient)
     client.reload()
 
 @bot.command(name='info', help='Gets information about the specified movie')
 @commands.has_any_role(*[roleID]) 
-async def pause(ctx, *, movie_title = None):
+async def info(ctx, *, movie_title = None):
     embed=discord.Embed(title="Available Titles", description="Select the number of the corresponding title to get information about.", color=0x00ff08)
     embed.set_footer(text="If you cannot find the title, please be more specific in the search")
     if movie_title is None:
@@ -335,18 +372,94 @@ async def pause(ctx, *, movie_title = None):
             embed2.add_field(name="Directors", value="```" + '\n'.join(map(str, directors[0:5])) + "```", inline=False)
             await ctx.send(embed=embed2)
             
+@bot.command(name='imfeelinglucky', help='Plays a random movie') #updates
+@commands.has_any_role(*[roleID])
+async def imfeelinglucky(ctx):
+    #embed=discord.Embed(title="Available Titles", description="Currently available titles.", color=0x00ff08)
+    alphaBet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+    r = random.choice(alphaBet)
+    print(r)
+    movie_title = r
+    searchlist = []
+    searchlistFormatted = []
+    movies = plex.library.section('Movies')
+    for video in movies.search(movie_title):
+        searchlist.append(video.title)
+    if not searchlist:
+        await ctx.send("Cannot find a title containing `" + movie_title + "`")
+    else:
+        for i, item in enumerate(searchlist):
+            searchlistFormatted.append(str(i+1) + '. ' + item  + " (" + str(video.year) + ")")
+    text = random.choice(searchlist)
+    head, sep, tail = text.partition(" (")
+    client = plex.client(plexClient)
+    cars = plex.library.section('Movies').get(head)
+    client.playMedia(cars)
+    movies = ia.search_movie(text)
+    id = movies[0].getID()
+    movie = ia.get_movie(id)
+    title = movie['title']
+    try:
+        year = movie['year']
+    except KeyError:
+        year = "?"
+    try:
+        rating = movie['rating']
+    except KeyError:
+        rating = "?"
+    try:
+        directors = movie['directors']
+    except KeyError:
+        directors = "?"
+    try:
+        casting = movie['cast']
+    except KeyError:
+        casting = "?"
+    try:
+        coverURL = movie['cover url']
+    except KeyError:
+        coverURL = "?"
+    try:
+        plot = movie['plot']
+    except KeyError:
+        plot = "?"
+    text = "".join(map(str, plot[0]))
+    head, sep, tail = text.partition("::")
+    embed2=discord.Embed(title=title + "  (" + str(year) + ")", description="Rated " + str(rating) + " out of 10", color=0xffdd00)
+    embed2.set_author(name="Now Playing:")
+    embed2.set_thumbnail(url=coverURL)
+    embed2.add_field(name="Summary", value="```" + head + "```", inline=False)
+    embed2.add_field(name="Cast", value="```" + '\n'.join(map(str, casting[0:5])) + "```", inline=False)
+    embed2.add_field(name="Directors", value="```" + '\n'.join(map(str, directors[0:5])) + "```", inline=False)
+    await ctx.send(embed=embed2)
            
+@bot.command(name='debug', help='Lists all connected clients') #debugging command
+@commands.has_any_role(*[roleID])
+async def debug(ctx):
+    sessionSearchlist = []
+    clientSearchlist = []
+    for clients in plex.clients():
+        print(clients)
+        clientSearchlist.append(clients)
+    if not  clientSearchlist:
+        await ctx.send("**Cannot find any clients**")
+    else:
+        await ctx.send("**Available Client(s)**" + '\n' + "```" + '\n'.join(map(str,  clientSearchlist)) + "```")
+        
+    for session in plex.sessions():
+        print(session)
+        sessionSearchlist.append(session)
+    if not  sessionSearchlist:
+        await ctx.send("**Cannot find any sessions**")
+    else:
+        await ctx.send("**Available Session(s)**" + '\n' + "```" + '\n'.join(map(str,  sessionSearchlist)) + "```")
 
-# @bot.command(name='clients', help='Lists all connected clients') #debugging command
-# @commands.has_any_role(*[roleID])
-# async def search(ctx):
-    # searchlist = []
-    # for client in plex.sessions():
-        # searchlist.append(client.title)
-    # if not searchlist:
-        # await ctx.send("**Cannot find clients**")
-    # else:
-        # await ctx.send("**Available Clients**" + '\n' + "```" + '\n'.join(map(str, searchlist)) + "```")
+@bot.command(name='installUpdate', help='Attempts to install updates') #updates
+@commands.has_any_role(*[roleID])
+async def installUpdate(ctx):
+    plex.checkForUpdate()
+    plex.isLatest()
+    plex.installUpdate()
 
-
+    
 bot.run(TOKEN)
